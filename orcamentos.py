@@ -81,6 +81,32 @@ def renderizar_orcamentos():
             st.success("Orçamento gerado com sucesso! (A tabela EAP será atualizada em breve)")
             
     with col_eap:
-
         st.subheader("📐 EAP Paramétrica")
-        st.info("Aqui vai ficar a tabela com as abas de Urbanização, Contrapartida e Resumo.")
+        
+        # Criando as abas (Tabs) nativas do Streamlit
+        aba_urb, aba_contra, aba_resumo = st.tabs(["Urbanização", "Contrapartida", "Resumo"])
+        
+        with aba_urb:
+            # Dados falsos (mock) para a tabela de Urbanização
+            dados_urb = {
+                "Código": ["01.01", "01.02", "02.01", "03.01"],
+                "Descrição do Serviço": ["Instalação de Canteiro", "Locação da Obra", "Escavação de Vala", "Tubo de Concreto PA-1"],
+                "Unid.": ["VB", "M2", "M3", "M"],
+                "Qtd.": [1.0, 150000.0, 450.5, 1200.0],
+                "Unitário (R$)": [15000.00, 0.50, 25.30, 85.00],
+                "Total (R$)": [15000.00, 75000.00, 11397.65, 102000.00]
+            }
+            # Renderiza a tabela interativa
+            st.dataframe(dados_urb, use_container_width=True, hide_index=True)
+            
+        with aba_contra:
+            st.info("Nenhum item de contrapartida lançado no momento.")
+            
+        with aba_resumo:
+            st.info("O resumo dos grupos de custo aparecerá aqui.")
+            
+        # Totalizador Geral no rodapé da coluna
+        st.write("---")
+        # Usamos HTML/CSS básico aqui para deixar o texto grande e verde, igual ao seu original
+        st.markdown("<h3 style='text-align: right; color: #10b981;'>Valor Total Estimado: R$ 203.397,65</h3>", unsafe_allow_html=True)
+
