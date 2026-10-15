@@ -1,0 +1,15 @@
+[theme]
+# Cor principal (Verde Emerald 600 do Tailwind)
+primaryColor = "#10b981"
+
+# Cor de fundo principal (Slate 50)
+backgroundColor = "#f8fafc"
+
+# Cor de fundo secundária para a barra lateral (Slate 100)
+secondaryBackgroundColor = "#f1f5f9"
+
+# Cor do texto (Slate 700)
+textColor = "#334155"
+
+# Fonte padrão
+font = "sans serif"
