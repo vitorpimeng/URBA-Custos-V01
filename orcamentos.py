@@ -44,7 +44,7 @@ def renderizar_orcamentos():
                 
             passeio_frente = st.selectbox("Passeio em Frente aos Lotes? *", ["Não", "Sim"])
             area_pavimento = st.number_input("Área de Pavimento (m²) *", value=0)
-        
+            
     with col_eap:
         st.subheader("📐 EAP Paramétrica")
         st.info("Aqui vai ficar a tabela com as abas de Urbanização, Contrapartida e Resumo.")
