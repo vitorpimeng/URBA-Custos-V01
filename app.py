@@ -51,6 +51,20 @@ def tela_login():
                                 st.session_state['email_usuario'] = resultado["email"]
                                 st.session_state['perfil_usuario'] = resultado["funcao"]
                                 st.session_state['user_id'] = resultado["id"]
+                                
+                                # --- NOVO: CARREGANDO OS DADOS DO BANCO PARA A MEMÓRIA ---
+                                with st.spinner("Carregando matrizes de dados..."):
+                                    dados_iniciais = banco_dados.carregar_dados_iniciais()
+                                    if dados_iniciais["sucesso"]:
+                                        st.session_state['matriz_polos'] = dados_iniciais["dados"]["polos"]
+                                        st.session_state['matriz_produtos'] = dados_iniciais["dados"]["produtos"]
+                                        st.session_state['matriz_pavimento'] = dados_iniciais["dados"]["pavimento"]
+                                        st.session_state['matriz_indiretos'] = dados_iniciais["dados"]["indiretos"]
+                                        st.session_state['matriz_opcionais'] = dados_iniciais["dados"]["opcionais"]
+                                    else:
+                                        st.error(f"Erro ao carregar matrizes: {dados_iniciais['erro']}")
+                                # ----------------------------------------------------------
+                                
                                 st.rerun()
                             else:
                                 st.error(f"Erro ao entrar: {resultado['erro']}")
