@@ -1,5 +1,6 @@
 import streamlit as st
 import orcamentos
+import configuracoes
 
 # 1. CONFIGURAÇÃO DA PÁGINA (Deve ser a primeira linha do Streamlit)
 st.set_page_config(
@@ -107,7 +108,7 @@ def tela_principal():
     elif menu_selecionado == "📈 Relatórios":
         st.title("📈 Relatórios e Curva ABC")
     elif menu_selecionado == "⚙️ Configurações":
-        st.title("⚙️ Configurações (Admin)")
+        configuracoes.renderizar_configuracoes()
 
 # 5. ROTEAMENTO (O "Coração" do app)
 # Se não estiver logado, mostra login. Se estiver, mostra o app.
