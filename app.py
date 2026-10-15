@@ -1,6 +1,7 @@
 import streamlit as st
 import orcamentos
 import configuracoes
+import relatorios
 
 # 1. CONFIGURAÇÃO DA PÁGINA (Deve ser a primeira linha do Streamlit)
 st.set_page_config(
@@ -106,7 +107,7 @@ def tela_principal():
     elif menu_selecionado == "📍 Prospecção":
         st.title("📍 Módulo de Prospecção")
     elif menu_selecionado == "📈 Relatórios":
-        st.title("📈 Relatórios e Curva ABC")
+        relatorios.renderizar_relatorios()
     elif menu_selecionado == "⚙️ Configurações":
         configuracoes.renderizar_configuracoes()
 
