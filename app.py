@@ -46,15 +46,68 @@ def tela_login():
                 else:
                     st.error("Por favor, preencha e-mail e senha.")
 
-# 4. FUNÇÃO DA TELA PRINCIPAL (O APP)
-def tela_principal():
-    st.success(f"Bem-vindo, {st.session_state['email_usuario']}! Seu perfil é: {st.session_state['perfil_usuario']}")
+# 4. FUNÇÃO DA TELA PRINCIPAL (O APP) E DASHBOARD
+def tela_dashboard():
+    # Pega o nome antes do @ no email para dar boas-vindas
+    nome_usuario = st.session_state['email_usuario'].split('@')[0].capitalize()
     
-    if st.button("Sair (Logout)"):
-        st.session_state['usuario_logado'] = False
-        st.session_state['email_usuario'] = ""
-        st.session_state['perfil_usuario'] = ""
-        st.rerun()
+    st.title(f"Olá, {nome_usuario}! 👋")
+    st.markdown("### Bem-vindo ao seu Centro de Comando de Orçamentos.")
+    st.write("---")
+    
+    # Criando duas colunas (1/3 e 2/3 do espaço)
+    col_esq, col_dir = st.columns([1, 2])
+    
+    with col_esq:
+        st.subheader("⭐ Acesso Rápido")
+        st.button("📄 Novo Orçamento", use_container_width=True)
+        st.button("🧮 Simular Orçamento", use_container_width=True)
+        st.button("📝 Solicitar Orçamento", use_container_width=True)
+        
+    with col_dir:
+        st.subheader("🕒 Últimos Orçamentos")
+        # Tabela de dados falsos só para vermos o visual
+        dados_recentes = {
+            "Data": ["15/10/2026", "14/10/2026", "10/10/2026"],
+            "Área": ["Residencial Urba Sul", "Loteamento Norte", "Condomínio das Árvores"],
+            "Município": ["Ribeirão Preto", "Campinas", "São José do Rio Preto"],
+            "Status": ["Concluído", "Em Andamento", "Em Andamento"]
+        }
+        st.dataframe(dados_recentes, use_container_width=True, hide_index=True)
+
+def tela_principal():
+    # Criando o Menu Lateral (Sidebar)
+    with st.sidebar:
+        st.markdown("### 🏗️ URBA CUSTOS") 
+        st.caption(f"👤 {st.session_state['email_usuario']}")
+        st.caption(f"🏷️ Perfil: {st.session_state['perfil_usuario']}")
+        st.write("---")
+        
+        # O st.radio é o nosso menu de navegação
+        menu_selecionado = st.radio(
+            "Navegação",
+            ["🏠 Início", "📊 Orçamentos", "📍 Prospecção", "📈 Relatórios", "⚙️ Configurações"]
+        )
+        
+        st.write("---")
+        if st.button("🚪 Sair", use_container_width=True):
+            st.session_state['usuario_logado'] = False
+            st.session_state['email_usuario'] = ""
+            st.session_state['perfil_usuario'] = ""
+            st.rerun()
+
+    # Roteamento: Mostra a tela dependendo do que foi clicado no menu
+    if menu_selecionado == "🏠 Início":
+        tela_dashboard()
+    elif menu_selecionado == "📊 Orçamentos":
+        st.title("📊 Módulo de Orçamentos")
+        st.info("Aqui entrará a tela de Parâmetros e a EAP.")
+    elif menu_selecionado == "📍 Prospecção":
+        st.title("📍 Módulo de Prospecção")
+    elif menu_selecionado == "📈 Relatórios":
+        st.title("📈 Relatórios e Curva ABC")
+    elif menu_selecionado == "⚙️ Configurações":
+        st.title("⚙️ Configurações (Admin)")
 
 # 5. ROTEAMENTO (O "Coração" do app)
 # Se não estiver logado, mostra login. Se estiver, mostra o app.
