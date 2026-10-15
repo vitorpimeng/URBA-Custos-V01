@@ -2,6 +2,7 @@ import streamlit as st
 import orcamentos
 import configuracoes
 import relatorios
+import banco_dados
 
 # 1. CONFIGURAÇÃO DA PÁGINA (Deve ser a primeira linha do Streamlit)
 st.set_page_config(
@@ -21,33 +22,58 @@ if 'perfil_usuario' not in st.session_state:
     st.session_state['perfil_usuario'] = ""
 
 # 3. FUNÇÃO DA TELA DE LOGIN
+# 3. FUNÇÃO DA TELA DE LOGIN
 def tela_login():
-    # Usamos colunas para centralizar o form de login, simulando o flexbox do Tailwind
     col1, col2, col3 = st.columns([1, 1, 1])
     
     with col2:
-        st.image("https://urba.com.br/wp-content/uploads/2021/03/logo-urba.png", width=200) # Logo provisória
+        st.image("https://urba.com.br/wp-content/uploads/2021/03/logo-urba.png", width=200)
         st.markdown("<h4 style='text-align: center; color: #10b981;'>Módulo Prospecção & Orçamentos</h4>", unsafe_allow_html=True)
         st.write("---")
         
-        # Formulário de Login
-        with st.form(key="form_login"):
-            email = st.text_input("E-mail")
-            senha = st.text_input("Senha", type="password")
-            
-            # Botão de submit do formulário
-            submit = st.form_submit_button("Entrar no Sistema", use_container_width=True)
-            
-            if submit:
-                # Lógica de autenticação (Por enquanto, mockada/falsa para testes)
-                if email and senha:
-                    # Aqui no futuro conectaremos com o Supabase
-                    st.session_state['usuario_logado'] = True
-                    st.session_state['email_usuario'] = email
-                    st.session_state['perfil_usuario'] = "Orçamento" # Mock
-                    st.rerun() # Força a tela a recarregar para aplicar o novo estado
-                else:
-                    st.error("Por favor, preencha e-mail e senha.")
+        # Criando as abas de Login e Cadastro (igual você tinha no JS!)
+        aba_login, aba_cadastro = st.tabs(["Entrar", "Criar Conta"])
+        
+        with aba_login:
+            with st.form(key="form_login"):
+                email = st.text_input("E-mail")
+                senha = st.text_input("Senha", type="password")
+                submit_login = st.form_submit_button("Entrar no Sistema", use_container_width=True)
+                
+                if submit_login:
+                    if email and senha:
+                        with st.spinner("Autenticando..."):
+                            # AQUI CHAMAMOS O BANCO DE DADOS REAL!
+                            resultado = banco_dados.fazer_login(email, senha)
+                            
+                            if resultado["sucesso"]:
+                                st.session_state['usuario_logado'] = True
+                                st.session_state['email_usuario'] = resultado["email"]
+                                st.session_state['perfil_usuario'] = resultado["funcao"]
+                                st.session_state['user_id'] = resultado["id"]
+                                st.rerun()
+                            else:
+                                st.error(f"Erro ao entrar: {resultado['erro']}")
+                    else:
+                        st.warning("Por favor, preencha e-mail e senha.")
+                        
+        with aba_cadastro:
+            with st.form(key="form_cadastro"):
+                novo_email = st.text_input("Novo E-mail")
+                nova_senha = st.text_input("Nova Senha", type="password")
+                funcao = st.selectbox("Perfil de Acesso", ["prospector", "orcamento"])
+                submit_cadastro = st.form_submit_button("Criar Nova Conta", use_container_width=True)
+                
+                if submit_cadastro:
+                    if novo_email and nova_senha:
+                        with st.spinner("Criando conta..."):
+                            resultado = banco_dados.criar_conta(novo_email, nova_senha, funcao)
+                            if resultado["sucesso"]:
+                                st.success("Conta criada com sucesso! Vá para a aba 'Entrar' para fazer login.")
+                            else:
+                                st.error(f"Erro ao cadastrar: {resultado['erro']}")
+                    else:
+                        st.warning("Preencha todos os campos.")
 
 # 4. FUNÇÃO DA TELA PRINCIPAL (O APP) E DASHBOARD
 def tela_dashboard():
