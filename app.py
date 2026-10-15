@@ -1,4 +1,5 @@
 import streamlit as st
+import orcamentos
 
 # 1. CONFIGURAÇÃO DA PÁGINA (Deve ser a primeira linha do Streamlit)
 st.set_page_config(
@@ -100,8 +101,7 @@ def tela_principal():
     if menu_selecionado == "🏠 Início":
         tela_dashboard()
     elif menu_selecionado == "📊 Orçamentos":
-        st.title("📊 Módulo de Orçamentos")
-        st.info("Aqui entrará a tela de Parâmetros e a EAP.")
+        orcamentos.renderizar_orcamentos()
     elif menu_selecionado == "📍 Prospecção":
         st.title("📍 Módulo de Prospecção")
     elif menu_selecionado == "📈 Relatórios":
