@@ -1,6 +1,12 @@
 import streamlit as st
 
 def renderizar_orcamentos():
+    # 1. Inicializa a memória da tabela e do total (se ainda não existirem)
+    if 'dados_eap' not in st.session_state:
+        st.session_state['dados_eap'] = {"Código": [], "Descrição": [], "Unid.": [], "Qtd.": [], "Unitário": [], "Total": []}
+    if 'valor_total' not in st.session_state:
+        st.session_state['valor_total'] = 0.0
+
     st.title("📊 Módulo de Orçamentos")
     
     # Criando duas colunas: 1/3 para parâmetros (esquerda) e 2/3 para EAP (direita)
@@ -78,7 +84,20 @@ def renderizar_orcamentos():
         # BOTÃO GERAR ORÇAMENTO
         st.write("---")
         if st.button("🚀 GERAR ORÇAMENTO", use_container_width=True, type="primary"):
-            st.success("Orçamento gerado com sucesso! (A tabela EAP será atualizada em breve)")
+            # Aqui no futuro chamaremos o seu "Motor de Cálculo" (JS 03)
+            # Por enquanto, simulamos um cálculo usando a variável 'area_total' que vem lá de cima!
+            custo_limpeza = area_total * 1.20
+            
+            st.session_state['dados_eap'] = {
+                "Código": ["01.01", "02.01"],
+                "Descrição": ["Instalação de Canteiro", "Limpeza do Terreno (Área Total)"],
+                "Unid.": ["VB", "M2"],
+                "Qtd.": [1.0, area_total],
+                "Unitário": [15000.00, 1.20],
+                "Total": [15000.00, custo_limpeza]
+            }
+            st.session_state['valor_total'] = 15000.00 + custo_limpeza
+            st.rerun() # Manda o Streamlit recarregar a tela para mostrar os novos dados
             
     with col_eap:
         st.subheader("📐 EAP Paramétrica")
@@ -87,17 +106,8 @@ def renderizar_orcamentos():
         aba_urb, aba_contra, aba_resumo = st.tabs(["Urbanização", "Contrapartida", "Resumo"])
         
         with aba_urb:
-            # Dados falsos (mock) para a tabela de Urbanização
-            dados_urb = {
-                "Código": ["01.01", "01.02", "02.01", "03.01"],
-                "Descrição do Serviço": ["Instalação de Canteiro", "Locação da Obra", "Escavação de Vala", "Tubo de Concreto PA-1"],
-                "Unid.": ["VB", "M2", "M3", "M"],
-                "Qtd.": [1.0, 150000.0, 450.5, 1200.0],
-                "Unitário (R$)": [15000.00, 0.50, 25.30, 85.00],
-                "Total (R$)": [15000.00, 75000.00, 11397.65, 102000.00]
-            }
-            # Renderiza a tabela interativa
-            st.dataframe(dados_urb, use_container_width=True, hide_index=True)
+            # Agora a tabela lê os dados direto da memória (Session State)
+            st.dataframe(st.session_state['dados_eap'], use_container_width=True, hide_index=True)
             
         with aba_contra:
             st.info("Nenhum item de contrapartida lançado no momento.")
@@ -107,6 +117,9 @@ def renderizar_orcamentos():
             
         # Totalizador Geral no rodapé da coluna
         st.write("---")
-        # Usamos HTML/CSS básico aqui para deixar o texto grande e verde, igual ao seu original
-        st.markdown("<h3 style='text-align: right; color: #10b981;'>Valor Total Estimado: R$ 203.397,65</h3>", unsafe_allow_html=True)
+        
+        # Formata o valor total para o padrão brasileiro (ex: 150.000,00)
+        valor_formatado = f"{st.session_state['valor_total']:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+        st.markdown(f"<h3 style='text-align: right; color: #10b981;'>Valor Total Estimado: R$ {valor_formatado}</h3>", unsafe_allow_html=True)
+
 
